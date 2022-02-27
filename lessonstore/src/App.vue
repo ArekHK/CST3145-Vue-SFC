@@ -1,21 +1,33 @@
 <template>
   <div id="app">
-    <div id="cartBtn">
-      <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
-      <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
-    </div> 
+      <div v-if="showCheckout != true">
+        <div id="cartBtn">
+          <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+          <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+        </div> 
 
-    <lesson-component :lesson="lesson" @addItem="addItem"></lesson-component>
+        <lesson-component :lesson="lesson" :searchLessons="searchLessons" @addItem="addItem" @searchItem="searchItem"></lesson-component>
+      </div>
+
+      <div v-else> <!-- Code for the Checkout Functionality-->
+      <div id="cartBtn">
+          <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+          <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+        </div> 
+
+      <checkout-component></checkout-component>
+      </div>
   </div>
 </template>
 
 <script>
-// import CheckoutComponent from './components/CheckoutPage.vue'
+import CheckoutComponent from './components/CheckoutPage.vue'
 import LessonComponent from './components/LessonPage.vue'
 
 export default {
   name: 'App',
   components: {
+    CheckoutComponent,
     LessonComponent
   },
   data() {
@@ -47,20 +59,12 @@ export default {
         }
       }
     },
-    searchItem(){
-      let vm = this.searchLessons;
-
-      if(this.searchLetter != ''){ //checks if the user has entered search information.
-        fetch('https://cst3145-node-server.herokuapp.com/search/collection/lesson/' + this.searchLetter).then(
-        function (response) {
-          response.json().then(
-            function (json) {
-              console.log(json)
-
-              // REMOVED app. at the start
-              vm.searchLessons = json;
-            });
-        });
+    searchItem(searchLetter){
+      console.log(searchLetter)
+      if(searchLetter != ''){ //checks if the user has entered search information.
+        fetch('https://cst3145-node-server.herokuapp.com/search/collection/lesson/' + searchLetter)
+        .then(response => response.json())
+        .then(data => (this.searchLessons = data))
       }
     },
     removeItem(id){
@@ -145,7 +149,7 @@ export default {
 
       fetch('https://cst3145-node-server.herokuapp.com/collection/lesson/')
       .then(response => response.json())
-      .then(data =>(this.searchLessons = data))
+      .then(data => (this.searchLessons = data))
     },
     openCheckout(){
       this.showCheckout = this.showCheckout ? false : true;

@@ -2,7 +2,7 @@
     <div>
         <div id = "controls">
             <br>
-            <input class="searchLetter" placeholder="Type to search lessons" v-model="searchLetter" v-on:input="searchItem()">
+            <input class="searchLetter" placeholder="Type to search lessons" v-model="searchLetter" v-on:input="lookForLessons()">
             <br>
             <form>
                 <input type="radio" id="topic" name="sort" value="topic" v-model="sortAttribute">
@@ -42,7 +42,7 @@
 
 export default {
     name: "LessonPage",
-    props: ['lesson'],
+    props: ['lesson','searchLessons'],
     data() {
         return {
             searchLetter: '',
@@ -55,6 +55,10 @@ export default {
         addLesson(lesson){
             this.$emit('addItem',lesson)
         },
+        lookForLessons(){
+            let searchCriteria = this.searchLetter;
+            this.$emit('searchItem',searchCriteria)
+        },
         countSpace(lesson){
             return lesson.spaces != 0
         },
@@ -62,17 +66,22 @@ export default {
             let data = JSON.parse(JSON.stringify(this.lesson))
 
             if(this.searchLetter != ''){ //checks if the user has entered search information.
-              data = this.searchLessons.splice()
-
-              for (let i = 0; i < this.searchLessons.length; i++) {
+            console.log("searchRUN")
+            //parsing data prevents mutation of original data by creating copy
+            let searchData = JSON.parse(JSON.stringify(this.searchLessons))
+            console.log(searchData);
+              
+              for (let i = 0; i < searchData.length; i++) {
                 for(let y = 0; y < this.lesson.length; y++){
-                  if(this.searchLessons[i]._id === this.lesson[y]._id){
+                  if(searchData[i]._id === this.lesson[y]._id){
                     console.log("MATCH LESSONS " + y + this.lesson[y].topic)
-                    this.searchLessons[i].spaces = this.lesson[y].spaces
-                    console.log(this.searchLessons[i].spaces);
+                    searchData[i].spaces = this.lesson[y].spaces
+                    console.log(this.lesson[i].spaces);
                   }
                 }
               }
+
+              data = searchData;
             }
             
             //sort the array based on the attribute selected
@@ -123,7 +132,14 @@ export default {
             }
         }
     },
+
+    //sort lessons as soon as user makes changes to data
     watch: {
+        searchLessons: {
+            handler(){
+                this.sorting()
+            }
+        },
         lesson: {
             handler(){
                 this.sorting()
@@ -139,6 +155,10 @@ export default {
                 this.sorting()
             }
         }
+    },
+    //sort lessons as soon as page loads
+    created: function(){
+        this.sorting()
     }
 }
 </script>
