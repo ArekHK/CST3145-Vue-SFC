@@ -3,10 +3,10 @@
     <div id = "controls">
         <p>Please enter your details</p>
         <label for="fname">Name</label><br>
-        <input v-model="order.firstName"><br>
+        <input v-model="firstName"><br>
         <label for="avail">Phone Number</label><br>
-        <input v-model="order.phoneNo"><br>
-        <button @click='placeOrder()'>Place Order</button>
+        <input v-model="phoneNo"><br>
+        <button @click='placeOrder()' :disabled='!verifyDetails()'>Place Order</button>
     </div>
 
     <ul>
@@ -28,16 +28,23 @@ export default {
     props: ['cart','lesson'],
     data() {
         return {
-             order: {
-                firstName: '',
-                phoneNo: ''
-            },
+            firstName: '',
+            phoneNo: ''
         };
     },
     methods: {
         removeLesson(lessonid){
             this.$emit('removeItem',lessonid)
         },
+        verifyDetails(){
+            let onlyLetters = /^[a-zA-Z]+$/ //regular expressions for checking account details
+            let onlyNumbers = /^[0-9]*$/
+
+            if(this.phoneNo.length == 11 && onlyNumbers.test(this.phoneNo) == true && onlyLetters.test(this.firstName) == true){ //checks if all the data matches regex
+              return true;
+            } else
+            return false;
+          },
         getLessons(){
             //compares IDs in the cart against lessons in array of lessons
             let lessonDetails = []

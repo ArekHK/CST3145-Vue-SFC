@@ -153,33 +153,11 @@ export default {
     openCheckout(){
       this.showCheckout = this.showCheckout ? false : true;
     },
-    getLessons(){
-      let lessonDetails = []
-      for (let id of this.cart){
-        for (let _lesson of this.lesson){
-          if(id === _lesson._id){
-            lessonDetails.push(_lesson)
-          }
-        }
-      }
-      return lessonDetails;
-    },
   },
   created: function(){
     fetch('https://cst3145-node-server.herokuapp.com/collection/lesson')
     .then(response => response.json())
     .then(data => (this.lesson = data))
-  },
-  computed: {
-    verifyDetails(){
-      let onlyLetters = /^[a-zA-Z]+$/ //regular expressions for checking account details
-      let onlyNumbers = /^[0-9]*$/
-
-      if(this.order.phoneNo.length == 11 && onlyNumbers.test(this.order.phoneNo) == true && onlyLetters.test(this.order.firstName) == true){ //checks if all the data matches regex
-        return true;
-      } else
-      return false;
-    },
   },
   watch: {
     cart(){
