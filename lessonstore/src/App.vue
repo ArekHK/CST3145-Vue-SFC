@@ -6,16 +6,20 @@
           <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
         </div> 
 
+        <br>
+
         <lesson-component :lesson="lesson" :searchLessons="searchLessons" @addItem="addItem" @searchItem="searchItem"></lesson-component>
       </div>
 
       <div v-else> <!-- Code for the Checkout Functionality-->
       <div id="cartBtn">
-          <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
-          <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
-        </div> 
+        <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+        <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+      </div> 
 
-      <checkout-component></checkout-component>
+      <br>
+
+      <checkout-component :cart="cart" :lesson="lesson" @removeItem="removeItem"></checkout-component>
       </div>
   </div>
 </template>
@@ -38,12 +42,7 @@ export default {
       showCheckout: false,
       orderComplete: false,
       cartLength: 0,
-      cart: [],
-      order: {
-        firstName: '',
-        phoneNo: ''
-      },
-      
+      cart: [], 
     }
   },
   methods:{
