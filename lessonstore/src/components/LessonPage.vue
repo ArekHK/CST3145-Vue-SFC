@@ -54,8 +54,5 @@ export default {
             return lesson.spaces != 0
         }
     },
-    watch: {
-
-    }
 }
 </script>

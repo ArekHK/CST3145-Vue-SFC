@@ -1,5 +1,10 @@
 <template>
   <div id="app">
+    <div>
+      <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+      <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
+    </div> 
+
     <lesson-component :lesson="lesson" @addItem="addItem"></lesson-component>
   </div>
 </template>
@@ -21,6 +26,7 @@ export default {
       showCheckout: false,
       orderComplete: false,
       searchLetter: '',
+      cartLength: 0,
       cart: [],
       order: {
         firstName: '',
@@ -253,6 +259,17 @@ export default {
       } else
       return false;
     },
+  },
+  watch: {
+    cart(){
+      if (this.cart.length > 0){
+        this.showCart = true;
+      } else {
+        this.showCart = false; //disables the showCart button
+        this.showCheckout = false; //disables the checkout
+      }
+      this.cartLength = this.cart.length;
+    }
   }
 }
 </script>
