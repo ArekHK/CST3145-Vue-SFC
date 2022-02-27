@@ -15,7 +15,7 @@
             <h1>{{lesson.topic}}</h1>
             <p>location: {{lesson.location}}</p>
             <p>Price: £{{lesson.price}}</p>
-            <button @click='removeItem(lesson._id)'><span v-bind:class="lesson.icon"></span> Remove Lesson</button>
+            <button @click='removeLesson(lesson._id)'><span v-bind:class="lesson.icon"></span> Remove Lesson</button>
         </li>
     </ul>
 
