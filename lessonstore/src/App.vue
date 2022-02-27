@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <lesson-component :lesson="lesson" @addItem="addItem"></lesson-component>
   </div>
 </template>
 
 <script>
-import CheckoutComponent from './components/Checkout.vue'
-import LessonComponent from './components/Lesson.vue'
+// import CheckoutComponent from './components/CheckoutPage.vue'
+import LessonComponent from './components/LessonPage.vue'
 
 export default {
   name: 'App',
   components: {
-    CheckoutComponent,
     LessonComponent
   },
   data() {
@@ -47,13 +46,17 @@ export default {
       }
     },
     searchItem(){
+      let vm = this.searchLessons;
+
       if(this.searchLetter != ''){ //checks if the user has entered search information.
         fetch('https://cst3145-node-server.herokuapp.com/search/collection/lesson/' + this.searchLetter).then(
         function (response) {
           response.json().then(
             function (json) {
               console.log(json)
-              app.searchLessons = json;
+
+              // REMOVED app. at the start
+              vm.searchLessons = json;
             });
         });
       }
@@ -75,9 +78,12 @@ export default {
       let subjectSpace = [];
       let uniqueIDs = [];
 
+      let vm = this.lesson;
+
+
       //stack the same lesson and increment count of it within one order
-      this.cart.forEach(function(cartItem,cartIndex){
-        app.lesson.forEach(function(lessonItem,lessonIndex){
+      this.cart.forEach(function(cartItem){
+        vm.forEach(function(lessonItem){
           if(cartItem === lessonItem._id && uniqueIDs.includes(cartItem) == false ){
             let temp = lessonItem.topic + "-" + lessonItem.location
             subjectSpace.push({Lesson: temp,Ordered: 0})
@@ -86,8 +92,8 @@ export default {
         });
       });
 
-      this.cart.forEach(function(cartItem,cartIndex){
-        app.lesson.forEach(function(lessonItem,lessonIndex){
+      this.cart.forEach(function(cartItem){
+        vm.forEach(function(lessonItem){
           if(cartItem === lessonItem._id){
             let temp = lessonItem.topic + "-" + lessonItem.location
             for(let i = 0; i < subjectSpace.length; i++){
@@ -119,7 +125,7 @@ export default {
       for (let i = 0; i < this.cart.length; i++) {
         for(let y = 0; y < this.lesson.length; y++){
           if(this.cart[i] === this.lesson[y]._id){
-            updateSpaces = { "spaces": (this.lesson[y].spaces) };
+            let updateSpaces = { "spaces": (this.lesson[y].spaces) };
             fetch("https://cst3145-node-server.herokuapp.com/collection/lesson/" + this.cart[i], {
               method: "PUT", // sets method as PUT for HTTP
               headers: {
@@ -140,12 +146,9 @@ export default {
           response.json().then(
             function (json) {
               console.log(json)
-              app.searchLessons = json;
+              this.searchLessons = json;
             });
         });
-    },
-    countSpaces(lesson){
-      return lesson.spaces != 0
     },
     openCheckout(){
       this.showCheckout = this.showCheckout ? false : true;
@@ -163,90 +166,84 @@ export default {
     },
   },
   created: function(){
-  fetch('https://cst3145-node-server.herokuapp.com/collection/lesson').then(
-    function (response) {
-      response.json().then(
-        function (json) {
-          console.log(JSON.stringify(json));
-          app.lesson = json;
-        });
-    });
+    fetch('https://cst3145-node-server.herokuapp.com/collection/lesson')
+    .then(response => response.json())
+    .then(data => (this.lesson = data))
   },
   computed: {
-    countCart(){ //counts the total items in the cart
-      if (this.cart.length > 0){
-        this.showCart = true;
-      } else {
-        this.showCart = false; //disables the showCart button
-        this.showCheckout = false; //disables the checkout
-      }
-      return this.cart.length;
-    },
-    sorting(){
-      let sortOrder = this.sortLessons.order
-      let data = this.lesson;
+    // countCart(){ //counts the total items in the cart
+    //   if (this.cart.length > 0){
+    //     this.showCart = true;
+    //   } else {
+    //     this.showCart = false; //disables the showCart button
+    //     this.showCheckout = false; //disables the checkout
+    //   }
+    //   return this.cart.length;
+    // },
+    // sorting(){
+    //   let data = this.lesson.slice();
 
-      if(this.searchLetter != ''){ //checks if the user has entered search information.
-        data = this.searchLessons
+    //   if(this.searchLetter != ''){ //checks if the user has entered search information.
+    //     data = this.searchLessons.slice()
 
-        for (let i = 0; i < this.searchLessons.length; i++) {
-          for(let y = 0; y < this.lesson.length; y++){
-            if(this.searchLessons[i]._id === this.lesson[y]._id){
-              console.log("MATCH LESSONS " + y + this.lesson[y].topic)
-              this.searchLessons[i].spaces = this.lesson[y].spaces
-              console.log(this.searchLessons[i].spaces);
-            }
-          }
-        }
-      }
+    //     for (let i = 0; i < this.searchLessons.length; i++) {
+    //       for(let y = 0; y < this.lesson.length; y++){
+    //         if(this.searchLessons[i]._id === this.lesson[y]._id){
+    //           console.log("MATCH LESSONS " + y + this.lesson[y].topic)
+    //           this.searchLessons[i].spaces = this.lesson[y].spaces
+    //           console.log(this.searchLessons[i].spaces);
+    //         }
+    //       }
+    //     }
+    //   }
       
-      //sort the array based on the attribute selected
-      if(this.sortLessons.attribute == "topic"){
-        data.sort(comparetopic);
-      } else if(this.sortLessons.attribute == "location"){
-        data.sort(comparelocation);
-      } else if(this.sortLessons.attribute == "price"){
-        data.sort(comparePrice); 
-      } else if(this.sortLessons.attribute == "availability"){
-        data.sort(compareSpaces); 
-      } else {
-        data.reverse();
-      }
+    //   //sort the array based on the attribute selected
+    //   if(this.sortLessons.attribute == "topic"){
+    //     data.sort(comparetopic);
+    //   } else if(this.sortLessons.attribute == "location"){
+    //     data.sort(comparelocation);
+    //   } else if(this.sortLessons.attribute == "price"){
+    //     data.sort(comparePrice); 
+    //   } else if(this.sortLessons.attribute == "availability"){
+    //     data.sort(compareSpaces); 
+    //   } else {
+    //     data.reverse();
+    //   }
 
-      if(this.sortLessons.order == "asc"){
-        return data
-      } else {
-        return data.reverse(); //reverse the array if the option to sort descending is selected
-      }
+    //   if(this.sortLessons.order == "asc"){
+    //     return data
+    //   } else {
+    //     return data.reverse(); //reverse the array if the option to sort descending is selected
+    //   }
 
-      function comparetopic(a, b){
-        let x = a.topic.toLowerCase();
-        let y = b.topic.toLowerCase();
-        if (x < y) {return -1;}
-        if (x > y) {return 1;}
-        return 0;
-      }
+    //   function comparetopic(a, b){
+    //     let x = a.topic.toLowerCase();
+    //     let y = b.topic.toLowerCase();
+    //     if (x < y) {return -1;}
+    //     if (x > y) {return 1;}
+    //     return 0;
+    //   }
 
-      function comparelocation(a, b){
-        let x = a.location.toLowerCase();
-        let y = b.location.toLowerCase();
-        if (x < y) {return -1;}
-        if (x > y) {return 1;}
-        return 0;
-      }
+    //   function comparelocation(a, b){
+    //     let x = a.location.toLowerCase();
+    //     let y = b.location.toLowerCase();
+    //     if (x < y) {return -1;}
+    //     if (x > y) {return 1;}
+    //     return 0;
+    //   }
 
-      function comparePrice(a, b,){
-        if(a.price > b.price) return 1;
-        if(a.price < b.price) return -1;
-        return 0;
-      }
+    //   function comparePrice(a, b,){
+    //     if(a.price > b.price) return 1;
+    //     if(a.price < b.price) return -1;
+    //     return 0;
+    //   }
 
-      function compareSpaces(a, b,){
-        if(a.spaces > b.spaces) return 1;
-        if(a.spaces < b.spaces) return -1;
-        return 0;
-      }
-    },
+    //   function compareSpaces(a, b,){
+    //     if(a.spaces > b.spaces) return 1;
+    //     if(a.spaces < b.spaces) return -1;
+    //     return 0;
+    //   }
+    // },
     verifyDetails(){
       let onlyLetters = /^[a-zA-Z]+$/ //regular expressions for checking account details
       let onlyNumbers = /^[0-9]*$/
@@ -267,6 +264,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 0px;
 }
 </style>
