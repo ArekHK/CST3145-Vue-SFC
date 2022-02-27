@@ -5,27 +5,27 @@
             <input class="searchLetter" placeholder="Type to search lessons" v-model="searchLetter" v-on:input="searchItem()">
             <br>
             <form>
-                <input type="radio" id="topic" name="sort" value="topic" v-model="sortLessons.attribute">
+                <input type="radio" id="topic" name="sort" value="topic" v-model="sortAttribute">
                 <label for="topic">topic</label><br>
-                <input type="radio" id="location" name="sort" value="location" v-model="sortLessons.attribute">
+                <input type="radio" id="location" name="sort" value="location" v-model="sortAttribute">
                 <label for="location">Location</label><br>
-                <input type="radio" id="price" name="sort" value="price" v-model="sortLessons.attribute">
+                <input type="radio" id="price" name="sort" value="price" v-model="sortAttribute">
                 <label for="price">Price</label><br>
-                <input type="radio" id="avail" name="sort" value="availability" v-model="sortLessons.attribute">
+                <input type="radio" id="avail" name="sort" value="availability" v-model="sortAttribute">
                 <label for="avail">Availability</label><br>
         
                 <br>
 
-                <input type="radio" id="asc" name="order" value="asc" v-model="sortLessons.order">
+                <input type="radio" id="asc" name="order" value="asc" v-model="sortOrder">
                 <label for="huey">Ascending</label><br>
-                <input type="radio" id="desc" name="order" value="desc" v-model="sortLessons.order">
+                <input type="radio" id="desc" name="order" value="desc" v-model="sortOrder">
                 <label for="huey">Descending</label><br>
             </form>
         </div>
 
         <div id = "lessonList">
             <ul>
-                <li v-bind:key="lesson._id" v-for="lesson in lesson"> 
+                <li v-bind:key="lesson._id" v-for="lesson in sortedLessons"> 
                     <img v-bind:src="lesson.image"> 
                     <h1>{{lesson.topic}}</h1>
                     <p>location: {{lesson.location}}</p>
@@ -47,10 +47,8 @@ export default {
         return {
             searchLetter: '',
             sortedLessons: [],
-            sortLessons: {
-                attribute: 'topic',
-                order: 'asc'
-            }
+            sortAttribute: 'topic',
+            sortOrder: 'asc'
         };
     },
     methods: {
@@ -61,9 +59,7 @@ export default {
             return lesson.spaces != 0
         },
         sorting(){
-            this.sortedLessons = this.lesson;
-
-            let data = this.sortedLessons;
+            let data = JSON.parse(JSON.stringify(this.lesson))
 
             if(this.searchLetter != ''){ //checks if the user has entered search information.
               data = this.searchLessons.splice()
@@ -80,19 +76,19 @@ export default {
             }
             
             //sort the array based on the attribute selected
-            if(this.sortLessons.attribute == "topic"){
+            if(this.sortAttribute == "topic"){
               data.sort(comparetopic);
-            } else if(this.sortLessons.attribute == "location"){
+            } else if(this.sortAttribute == "location"){
               data.sort(comparelocation);
-            } else if(this.sortLessons.attribute == "price"){
+            } else if(this.sortAttribute == "price"){
               data.sort(comparePrice); 
-            } else if(this.sortLessons.attribute == "availability"){
+            } else if(this.sortAttribute == "availability"){
               data.sort(compareSpaces); 
             } else {
               data.reverse();
             }
 
-            if(this.sortLessons.order == "asc"){
+            if(this.sortOrder == "asc"){
               this.sortedLessons = data
             } else {
               this.sortedLessons = data.reverse(); //reverse the array if the option to sort descending is selected
@@ -129,7 +125,17 @@ export default {
     },
     watch: {
         lesson: {
-            handler: function(){
+            handler(){
+                this.sorting()
+            }
+        },
+        sortOrder: {
+            handler(){
+                this.sorting()
+            }
+        },
+        sortAttribute: {
+            handler(){
                 this.sorting()
             }
         }
