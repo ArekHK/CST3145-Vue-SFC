@@ -1,6 +1,6 @@
 <template>
     <div>
-        <!-- <div id = "controls">
+        <div id = "controls">
             <br>
             <input class="searchLetter" placeholder="Type to search lessons" v-model="searchLetter" v-on:input="searchItem()">
             <br>
@@ -21,7 +21,7 @@
                 <input type="radio" id="desc" name="order" value="desc" v-model="sortLessons.order">
                 <label for="huey">Descending</label><br>
             </form>
-        </div> -->
+        </div>
 
         <div id = "lessonList">
             <ul>
@@ -44,7 +44,13 @@ export default {
     name: "LessonPage",
     props: ['lesson'],
     data() {
-        return {};
+        return {
+            searchLetter: '',
+            sortLessons: {
+            attribute: 'topic',
+            order: 'asc'
+        }
+        };
     },
     methods: {
         addLesson(lesson){

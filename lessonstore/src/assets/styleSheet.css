@@ -6,6 +6,8 @@ body{
 #controls{
     float: left;
     height: 1000px;
+    width: 100px;
+    text-align: left;
 }
 
 #lessonlist{
@@ -81,4 +83,10 @@ button:hover{
 
 label{
    font-family:calibri;
+}
+
+#cartBtn{
+    float: left;
+    margin-left: 0;
+    position: absolute;
 }

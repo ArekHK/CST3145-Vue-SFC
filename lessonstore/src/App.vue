@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div>
+    <div id="cartBtn">
       <button v-if='showCart == true' @click="openCheckout()"><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
       <button disabled="true" v-else><span class="fas fa-cart-plus"></span>Cart: {{cartLength}}</button>
     </div> 
@@ -25,17 +25,13 @@ export default {
       showCart: false,
       showCheckout: false,
       orderComplete: false,
-      searchLetter: '',
       cartLength: 0,
       cart: [],
       order: {
         firstName: '',
         phoneNo: ''
       },
-      sortLessons: {
-        attribute: 'topic',
-        order: 'asc'
-      }
+      
     }
   },
   methods:{
@@ -177,79 +173,6 @@ export default {
     .then(data => (this.lesson = data))
   },
   computed: {
-    // countCart(){ //counts the total items in the cart
-    //   if (this.cart.length > 0){
-    //     this.showCart = true;
-    //   } else {
-    //     this.showCart = false; //disables the showCart button
-    //     this.showCheckout = false; //disables the checkout
-    //   }
-    //   return this.cart.length;
-    // },
-    // sorting(){
-    //   let data = this.lesson.slice();
-
-    //   if(this.searchLetter != ''){ //checks if the user has entered search information.
-    //     data = this.searchLessons.slice()
-
-    //     for (let i = 0; i < this.searchLessons.length; i++) {
-    //       for(let y = 0; y < this.lesson.length; y++){
-    //         if(this.searchLessons[i]._id === this.lesson[y]._id){
-    //           console.log("MATCH LESSONS " + y + this.lesson[y].topic)
-    //           this.searchLessons[i].spaces = this.lesson[y].spaces
-    //           console.log(this.searchLessons[i].spaces);
-    //         }
-    //       }
-    //     }
-    //   }
-      
-    //   //sort the array based on the attribute selected
-    //   if(this.sortLessons.attribute == "topic"){
-    //     data.sort(comparetopic);
-    //   } else if(this.sortLessons.attribute == "location"){
-    //     data.sort(comparelocation);
-    //   } else if(this.sortLessons.attribute == "price"){
-    //     data.sort(comparePrice); 
-    //   } else if(this.sortLessons.attribute == "availability"){
-    //     data.sort(compareSpaces); 
-    //   } else {
-    //     data.reverse();
-    //   }
-
-    //   if(this.sortLessons.order == "asc"){
-    //     return data
-    //   } else {
-    //     return data.reverse(); //reverse the array if the option to sort descending is selected
-    //   }
-
-    //   function comparetopic(a, b){
-    //     let x = a.topic.toLowerCase();
-    //     let y = b.topic.toLowerCase();
-    //     if (x < y) {return -1;}
-    //     if (x > y) {return 1;}
-    //     return 0;
-    //   }
-
-    //   function comparelocation(a, b){
-    //     let x = a.location.toLowerCase();
-    //     let y = b.location.toLowerCase();
-    //     if (x < y) {return -1;}
-    //     if (x > y) {return 1;}
-    //     return 0;
-    //   }
-
-    //   function comparePrice(a, b,){
-    //     if(a.price > b.price) return 1;
-    //     if(a.price < b.price) return -1;
-    //     return 0;
-    //   }
-
-    //   function compareSpaces(a, b,){
-    //     if(a.spaces > b.spaces) return 1;
-    //     if(a.spaces < b.spaces) return -1;
-    //     return 0;
-    //   }
-    // },
     verifyDetails(){
       let onlyLetters = /^[a-zA-Z]+$/ //regular expressions for checking account details
       let onlyNumbers = /^[0-9]*$/
