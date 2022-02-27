@@ -46,10 +46,11 @@ export default {
     data() {
         return {
             searchLetter: '',
+            sortedLessons: [],
             sortLessons: {
-            attribute: 'topic',
-            order: 'asc'
-        }
+                attribute: 'topic',
+                order: 'asc'
+            }
         };
     },
     methods: {
@@ -58,7 +59,80 @@ export default {
         },
         countSpace(lesson){
             return lesson.spaces != 0
+        },
+        sorting(){
+            this.sortedLessons = this.lesson;
+
+            let data = this.sortedLessons;
+
+            if(this.searchLetter != ''){ //checks if the user has entered search information.
+              data = this.searchLessons.splice()
+
+              for (let i = 0; i < this.searchLessons.length; i++) {
+                for(let y = 0; y < this.lesson.length; y++){
+                  if(this.searchLessons[i]._id === this.lesson[y]._id){
+                    console.log("MATCH LESSONS " + y + this.lesson[y].topic)
+                    this.searchLessons[i].spaces = this.lesson[y].spaces
+                    console.log(this.searchLessons[i].spaces);
+                  }
+                }
+              }
+            }
+            
+            //sort the array based on the attribute selected
+            if(this.sortLessons.attribute == "topic"){
+              data.sort(comparetopic);
+            } else if(this.sortLessons.attribute == "location"){
+              data.sort(comparelocation);
+            } else if(this.sortLessons.attribute == "price"){
+              data.sort(comparePrice); 
+            } else if(this.sortLessons.attribute == "availability"){
+              data.sort(compareSpaces); 
+            } else {
+              data.reverse();
+            }
+
+            if(this.sortLessons.order == "asc"){
+              this.sortedLessons = data
+            } else {
+              this.sortedLessons = data.reverse(); //reverse the array if the option to sort descending is selected
+            }
+
+            function comparetopic(a, b){
+              let x = a.topic.toLowerCase();
+              let y = b.topic.toLowerCase();
+              if (x < y) {return -1;}
+              if (x > y) {return 1;}
+              return 0;
+            }
+
+            function comparelocation(a, b){
+              let x = a.location.toLowerCase();
+              let y = b.location.toLowerCase();
+              if (x < y) {return -1;}
+              if (x > y) {return 1;}
+              return 0;
+            }
+
+            function comparePrice(a, b,){
+              if(a.price > b.price) return 1;
+              if(a.price < b.price) return -1;
+              return 0;
+            }
+
+            function compareSpaces(a, b,){
+              if(a.spaces > b.spaces) return 1;
+              if(a.spaces < b.spaces) return -1;
+              return 0;
+            }
         }
     },
+    watch: {
+        lesson: {
+            handler: function(){
+                this.sorting()
+            }
+        }
+    }
 }
 </script>

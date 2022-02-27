@@ -143,14 +143,9 @@ export default {
       this.cart = [];
       this.searchLetter = '';
 
-      fetch('https://cst3145-node-server.herokuapp.com/collection/lesson/').then(
-        function (response) {
-          response.json().then(
-            function (json) {
-              console.log(json)
-              this.searchLessons = json;
-            });
-        });
+      fetch('https://cst3145-node-server.herokuapp.com/collection/lesson/')
+      .then(response => response.json())
+      .then(data =>(this.searchLessons = data))
     },
     openCheckout(){
       this.showCheckout = this.showCheckout ? false : true;
