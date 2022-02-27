@@ -19,7 +19,7 @@
 
       <br>
 
-      <checkout-component :cart="cart" :lesson="lesson" @removeItem="removeItem"></checkout-component>
+      <checkout-component :cart="cart" :lesson="lesson" @removeItem="removeItem" @clearCart="clearCart"></checkout-component>
       </div>
   </div>
 </template>
@@ -79,80 +79,12 @@ export default {
         }
       }
     },
-    placeOrder(){
-      let subjectSpace = [];
-      let uniqueIDs = [];
-
-      let vm = this.lesson;
-
-
-      //stack the same lesson and increment count of it within one order
-      this.cart.forEach(function(cartItem){
-        vm.forEach(function(lessonItem){
-          if(cartItem === lessonItem._id && uniqueIDs.includes(cartItem) == false ){
-            let temp = lessonItem.topic + "-" + lessonItem.location
-            subjectSpace.push({Lesson: temp,Ordered: 0})
-            uniqueIDs.push(cartItem);
-          }
-        });
-      });
-
-      this.cart.forEach(function(cartItem){
-        vm.forEach(function(lessonItem){
-          if(cartItem === lessonItem._id){
-            let temp = lessonItem.topic + "-" + lessonItem.location
-            for(let i = 0; i < subjectSpace.length; i++){
-              if(temp == subjectSpace[i].Lesson){
-                subjectSpace[i].Ordered +=1;
-              }
-            }
-          }
-        });
-      });
-
-      console.log(subjectSpace);
-      console.log(uniqueIDs);
-
-      const order = {name: this.order.firstName, phoneNumber: this.order.phoneNo, lessonID: uniqueIDs, orderedSpaces: subjectSpace};
-
-      fetch('https://cst3145-node-server.herokuapp.com/collection/order', { 
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(order),
-      })
-      .then(response => response.json())
-      .then(responseJSON => {
-        console.log('Success:', responseJSON);
-      });
-
-      for (let i = 0; i < this.cart.length; i++) {
-        for(let y = 0; y < this.lesson.length; y++){
-          if(this.cart[i] === this.lesson[y]._id){
-            let updateSpaces = { "spaces": (this.lesson[y].spaces) };
-            fetch("https://cst3145-node-server.herokuapp.com/collection/lesson/" + this.cart[i], {
-              method: "PUT", // sets method as PUT for HTTP
-              headers: {
-                "Content-Type": "application/json", //set data type as JSON
-              },
-              body: JSON.stringify(updateSpaces), //stringify the JSON object
-            });
-          }
-        }
-      }
-      
-      alert("Thank you for your purchase :)");
-      this.cart = [];
-      this.searchLetter = '';
-
-      fetch('https://cst3145-node-server.herokuapp.com/collection/lesson/')
-      .then(response => response.json())
-      .then(data => (this.searchLessons = data))
-    },
     openCheckout(){
       this.showCheckout = this.showCheckout ? false : true;
     },
+    clearCart(){
+      this.cart = [];
+    }
   },
   created: function(){
     fetch('https://cst3145-node-server.herokuapp.com/collection/lesson')
