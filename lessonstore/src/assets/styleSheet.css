@@ -3,11 +3,18 @@ body{
     font-family:calibri;
 }
 
-#controls{
+#controls-checkout, #controls-lesson{
     float: left;
     height: 1000px;
     width: 100px;
     text-align: left;
+    background-color:white;
+    margin:0;
+    padding:25px
+}
+
+#controls-checkout{
+    width: 200px
 }
 
 #lessonlist{
@@ -61,12 +68,6 @@ li:hover{
 
 button:hover{
     border-right:2px solid red;
-}
-
-#controls{
-    background-color:white;
-    margin:0;
-    padding:25px
 }
 
 .searchLetter{

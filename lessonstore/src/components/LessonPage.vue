@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div id = "controls">
+        <div id = "controls-lesson">
             <br>
             <input class="searchLetter" placeholder="Type to search lessons" v-model="searchLetter" v-on:input="lookForLessons()">
             <br>

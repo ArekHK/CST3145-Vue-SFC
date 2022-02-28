@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div id = "controls">
+    <div id = "controls-checkout">
         <p>Please enter your details</p>
         <label for="fname">Name</label><br>
         <input v-model="firstName"><br>
